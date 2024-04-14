@@ -1,5 +1,6 @@
 import 'package:bitcoin_ticker/coin_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class PriceScreen extends StatefulWidget {
   const PriceScreen({super.key});
@@ -10,6 +11,48 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String? selectedCurrency = "USD";
+
+// ANDROID DROPDOWN
+  DropdownButton<String> androidDropdown() {
+    List<DropdownMenuItem<String>> dropdownItems = [];
+    for (String currency in currenciesList) {
+      var newItem = DropdownMenuItem(
+        value: currency,
+        child: Text(currency),
+      );
+      dropdownItems.add(newItem);
+    }
+
+    return DropdownButton<String>(
+      items: dropdownItems,
+      onChanged: (value) {
+        setState(() {
+          selectedCurrency = value;
+        });
+      },
+      value: selectedCurrency,
+    );
+  }
+
+  // iOS DROPDOWN
+  CupertinoPicker iosPicker() {
+    List<Text> pickerItems = [];
+    for (String currency in currenciesList) {
+      pickerItems.add(
+        Text(currency),
+      );
+    }
+
+    return CupertinoPicker(
+      itemExtent: 34.0,
+      backgroundColor: Colors.lightBlue,
+      onSelectedItemChanged: (value) {
+        // print(value);
+      },
+      children: pickerItems,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,21 +90,7 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: const EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: DropdownButton(
-                value: selectedCurrency,
-                onChanged: (value) {
-                  setState(() {
-                    selectedCurrency = value;
-                  });
-                },
-                items: currenciesList
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList()
-                ),
+            child: iosPicker(),
           ),
         ],
       ),
