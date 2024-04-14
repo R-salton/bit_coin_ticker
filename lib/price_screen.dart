@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:bitcoin_ticker/coin_data.dart';
+import 'package:bitcoin_ticker/exchange.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   const PriceScreen({super.key});
@@ -11,6 +15,21 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String? selectedCurrency = "USD";
+  exchangeRate getExchangeRate = exchangeRate();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getExhange("USD");
+  }
+
+  dynamic getExhange(String currency) async {
+    var data= await getExchangeRate.getExhange(currency);
+print(data);
+  }
+
+  String currency = "USD";
+  String crypto = "ETH";
 
 // ANDROID DROPDOWN
   DropdownButton<String> androidDropdown() {
@@ -53,6 +72,16 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 
+  Widget getPicker() {
+    if (Platform.isAndroid) {
+      return androidDropdown();
+    } else if (Platform.isIOS) {
+      return iosPicker();
+    } else {
+      return androidDropdown();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +119,7 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: const EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: iosPicker(),
+            child: Platform.isIOS ? iosPicker() : androidDropdown(),
           ),
         ],
       ),
