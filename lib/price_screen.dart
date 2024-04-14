@@ -15,21 +15,29 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String? selectedCurrency = "USD";
+  List<dynamic> exchangeRateData = [];
+
+  Map btc = {};
+  Map eth = {};
+  Map ltc = {};
   exchangeRate getExchangeRate = exchangeRate();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getExhange("USD");
+    print(exchangeRateData);
   }
 
-  dynamic getExhange(String currency) async {
-    var data= await getExchangeRate.getExhange(currency);
-print(data);
-  }
+  Future<dynamic> getExhange(String currency) async {
+    var data = await getExchangeRate.getExhange(currency);
+    print(data);
 
-  String currency = "USD";
-  String crypto = "ETH";
+    exchangeRateData = data;
+    btc = exchangeRateData[0];
+    eth = exchangeRateData[1];
+    ltc = exchangeRateData[2];
+  }
 
 // ANDROID DROPDOWN
   DropdownButton<String> androidDropdown() {
@@ -95,23 +103,10 @@ print(data);
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.lightBlueAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  '1 BTC = ? USD',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+            child: CardCoin(
+              coin: btc["asset_id_base"],
+              currency: btc["asset_id_quote"],
+              exachangeRate: btc["rate"],
             ),
           ),
           Container(
@@ -122,6 +117,35 @@ print(data);
             child: Platform.isIOS ? iosPicker() : androidDropdown(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CardCoin extends StatelessWidget {
+  CardCoin({super.key, this.currency, this.coin, this.exachangeRate});
+
+  String? currency;
+  String? coin;
+  double? exachangeRate;
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.lightBlueAccent,
+      elevation: 5.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+        child: Text(
+          '1 $coin = $exachangeRate $currency',
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 20.0,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
