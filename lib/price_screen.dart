@@ -37,23 +37,12 @@ class _PriceScreenState extends State<PriceScreen> {
     initializeExchange(selectedCurrency ?? "USD");
   }
 
-//    getExhange(String currency) async {
-//     var data = await getExchangeRate.getExhange(currency);
-
-// // print(data);
-
-//     exchangeRateData = data;
-//     // print(exchangeRateData);
-//     btc = exchangeRateData[0];
-//     eth = exchangeRateData[1];
-//     ltc = exchangeRateData[2];
-//    return data;
-//   }
 
   void initializeExchange(String currency) async {
     exchangeRate exchangeList = exchangeRate();
     List<dynamic> data = await exchangeList.getExhange(currency);
     setState(() {
+      exchangeData.clear();
       exchangeData.addAll(data);
       btc = exchangeData[0];
       eth = exchangeData[1];
@@ -97,7 +86,10 @@ class _PriceScreenState extends State<PriceScreen> {
       itemExtent: 34.0,
       backgroundColor: Colors.lightBlue,
       onSelectedItemChanged: (value) {
-        // print(value);
+        setState(() {
+          selectedCurrency = currenciesList[value];
+          initializeExchange(selectedCurrency!);
+        });
       },
       children: pickerItems,
     );
@@ -128,30 +120,42 @@ class _PriceScreenState extends State<PriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          CardCoin(
-            coin: btc["asset_id_base"],
-            currency: btc["asset_id_quote"],
-            exachangeRate: btc["rate"],
-          ),
-          CardCoin(
-            coin: eth["asset_id_base"],
-            currency: eth["asset_id_quote"],
-            exachangeRate: eth["rate"],
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: CardCoin(
-              coin: ltc["asset_id_base"],
-              currency: ltc["asset_id_quote"],
-              exachangeRate: ltc["rate"],
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+                child: CardCoin(
+                  coin: btc["asset_id_base"],
+                  currency: btc["asset_id_quote"],
+                  exachangeRate: btc["rate"],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+                child: CardCoin(
+                  coin: eth["asset_id_base"],
+                  currency: eth["asset_id_quote"],
+                  exachangeRate: eth["rate"],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+                child: CardCoin(
+                  coin: ltc["asset_id_base"],
+                  currency: ltc["asset_id_quote"],
+                  exachangeRate: ltc["rate"],
+                ),
+              ),
+            ],
           ),
           Container(
             height: 150.0,
             alignment: Alignment.center,
             padding: const EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: Platform.isIOS ? iosPicker() : androidDropdown(),
+            child: iosPicker(),
+            // Platform.isIOS ? iosPicker() : androidDropdown(),
           ),
         ],
       ),
