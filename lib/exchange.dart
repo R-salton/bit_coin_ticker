@@ -8,7 +8,7 @@ const coinBaseUrl = "https://rest.coinapi.io/v1/exchangerate/BTC/USD?apikey=";
 class exchangeRate {
   dynamic exchangeRateList = [];
 
-  Future<dynamic> getExhange(String currency) async {
+  Future<List<dynamic>> getExhange(String currency) async {
     // var url = Uri.http("www.rest.coinapi.io/v1/exchangerate/BTC/$currency?apikey=$apiKey");
     http.Response responseBtc = await http.get(Uri.parse(
         "https://rest.coinapi.io/v1/exchangerate/BTC/$currency?apikey=$apiKey"));
